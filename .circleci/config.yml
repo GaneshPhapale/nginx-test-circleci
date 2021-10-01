@@ -1,0 +1,23 @@
+version: 2.1
+orbs:
+  aws-eks: circleci/aws-eks@0.2
+  kubernetes: circleci/kubernetes@0.8.0
+  aws-ecr: circleci/aws-ecr@6.15.3
+  docker: circleci/docker@1.5.0
+
+jobs: 
+  deploy_staging:
+    docker:
+      - image: circleci/node:12.13
+    steps:
+      - checkout
+      - run: ssh -oStrictHostKeyChecking=no -v $DEFAULT_USER@$TEST_IP "cd ~/nginx-test-circleci git pull; ./deploy.sh;"
+
+workflows:
+  main:
+    jobs:
+      - deploy_staging:
+          filters:
+            branches:
+              only:
+                - nginx-test-circleci
